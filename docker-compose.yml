@@ -1,0 +1,39 @@
+version: '3.8'
+
+services:
+  go:
+    container_name: app
+    build:
+      context: .
+      dockerfile: app.dockerfile
+    tty: true
+    ports:
+      - 8080:8080
+    depends_on:
+      - db
+    volumes:
+      - .:/app
+
+  db:
+    container_name: db
+    build:
+      context: .
+      dockerfile: db.dockerfile
+    tty: true
+    ports:
+      - 3306:3306
+    environment:
+      MYSQL_DATABASE: "test"
+      MYSQL_ROOT_PASSWORD: root
+    volumes:
+      - type: volume
+        source: mysql_data
+        target: /var/lib/mysql
+    networks:
+      - default
+    restart: always
+
+networks:
+  default:
+volumes:
+  mysql_data:
